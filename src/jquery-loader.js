@@ -101,6 +101,8 @@ jQuery(document).ready(
 
                     var loaderElm = jQuery(data);
 
+                    loaderElm.hide();
+
                     buildTemplate(loaderElm);
                 }
             );
