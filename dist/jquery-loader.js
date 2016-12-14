@@ -63,7 +63,6 @@ var RcmLoadingJqueryGlobalLoader = function (
      * start
      */
     var show = function () {
-        console.log('----show');
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingMessage')
         );
@@ -76,7 +75,6 @@ var RcmLoadingJqueryGlobalLoader = function (
      * end
      */
     var hide = function () {
-        console.log('----hide');
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingCompleteMessage')
         );
