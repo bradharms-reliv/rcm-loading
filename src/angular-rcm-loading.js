@@ -54,6 +54,16 @@ angular.module('RcmLoading').directive(
 
                     scope.isLoading = false;
 
+                    scope.showContent = false;
+
+                    /**
+                     * preShow
+                     */
+                    var preShow = function () {
+                        scope.isLoading = true;
+                        scope.safeApply();
+                    };
+
                     /**
                      * show
                      * @param loadingParams
@@ -63,7 +73,8 @@ angular.module('RcmLoading').directive(
                         scope.loadingMessage = rcmLoading.getConfigValue(
                             'loadingMessage'
                         );
-                        scope.isLoading = true;
+
+                        scope.showContent = true;
 
                         scope.safeApply();
                     };
@@ -80,6 +91,7 @@ angular.module('RcmLoading').directive(
                             'loadingCompleteMessage'
                         );
                         scope.isLoading = false;
+                        scope.showContent = false;
 
                         scope.safeApply();
                     };
@@ -91,6 +103,8 @@ angular.module('RcmLoading').directive(
                      * @param loadingParams
                      */
                     var onLoadingStart = function (loadingParams) {
+
+                        preShow();
 
                         if (showTimeout) {
                             return;
