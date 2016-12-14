@@ -75,7 +75,7 @@ angular.module('RcmLoading').directive(
                         );
 
                         scope.showContent = true;
-                        
+
                         scope.safeApply();
                     };
 
