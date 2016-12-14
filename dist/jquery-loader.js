@@ -14,6 +14,8 @@ var RcmLoadingJqueryGlobalLoader = function (
 
     var loaderElm;
 
+    var contentElm;
+
     var waitBeforeShow = rcmLoading.getConfigValue('waitBeforeShow');
 
     var waitBeforeHide = rcmLoading.getConfigValue('waitBeforeHide');
@@ -48,6 +50,19 @@ var RcmLoadingJqueryGlobalLoader = function (
         return loaderElm;
     };
 
+    var getContentElm = function () {
+
+        if (contentElm && contentElm.length > 0) {
+            return contentElm;
+        }
+
+        if (!hasLoaderElement()) {
+            return null;
+        }
+
+        return loaderElm.find('.loading-content');
+    };
+
     /**
      * hasLoaderElement
      * @returns {boolean}
@@ -60,13 +75,20 @@ var RcmLoadingJqueryGlobalLoader = function (
     };
 
     /**
+     * preShow
+     */
+    var preShow = function () {
+        loaderElm.show();
+    };
+
+    /**
      * start
      */
     var show = function () {
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingMessage')
         );
-        loaderElm.show();
+        contentElm.show();
     };
 
     var showTimeout = null;
@@ -79,6 +101,7 @@ var RcmLoadingJqueryGlobalLoader = function (
             rcmLoading.getConfigValue('loadingCompleteMessage')
         );
         loaderElm.hide();
+        contentElm.hide();
     };
 
     var hideTimeout = null;
@@ -88,6 +111,8 @@ var RcmLoadingJqueryGlobalLoader = function (
      * @param loadingParams
      */
     var onLoadingStart = function (loadingParams) {
+
+        preShow();
 
         if (showTimeout) {
             return;
@@ -191,8 +216,10 @@ var RcmLoadingJqueryGlobalLoader = function (
             function (data) {
 
                 loaderElm = jQuery(data);
+                contentElm = getContentElm();
 
                 loaderElm.hide();
+                contentElm.hide();
 
                 buildTemplate();
             }

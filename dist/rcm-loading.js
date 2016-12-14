@@ -13,8 +13,8 @@ var rcmLoading = {
         loadingMessage: '',
         loadingCompleteMessage: '',
         // For global loaders
-        waitBeforeShow: 1200, // ms
-        waitBeforeHide: 600  // ms
+        waitBeforeShow: 1000, // ms
+        waitBeforeHide: 500  // ms
     },
 
     /**
