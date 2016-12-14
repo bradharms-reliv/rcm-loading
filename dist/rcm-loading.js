@@ -11,7 +11,10 @@ var rcmLoading = {
         templateFolder: '/template',
         template: 'default',
         loadingMessage: '',
-        loadingCompleteMessage: ''
+        loadingCompleteMessage: '',
+        // For global loaders
+        waitBeforeShow: 1200, // ms
+        waitBeforeHide: 600  // ms
     },
 
     /**

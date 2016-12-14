@@ -71,6 +71,16 @@ module.exports = function (grunt) {
                     ],
                     dest: 'dist/<%= pkg.name %>.js'
                 }
+            },
+            watch: {
+                src: {
+                    files: ['src/*.js', 'src/**/*.js'],
+                    tasks: ['uglify', 'copy', 'concat']
+                },
+                less: {
+                    files: ['src/template/**/*.less'],
+                    tasks: ['less']
+                }
             }
         }
     );
@@ -80,6 +90,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task(s).
     grunt.registerTask('default', ['uglify', 'copy', 'less', 'concat']);
