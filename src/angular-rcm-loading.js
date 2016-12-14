@@ -3,16 +3,23 @@
  * @require:
  *  AngularJS
  */
-angular.module('RcmLoading', [])
+angular.module('RcmLoading', []);
 
-    .factory(
+/**
+ * rcmLoading
+ */
+angular.module('RcmLoading').factory(
     'rcmLoading',
     function () {
 
         return rcmLoading;
     }
-)
-    .directive(
+);
+
+/**
+ * rcmGlobalLoader
+ */
+angular.module('RcmLoading').directive(
     'rcmGlobalLoader',
     [
         'rcmLoading',
@@ -23,10 +30,18 @@ angular.module('RcmLoading', [])
                 css: rcmLoading.getTemplateUrl('loading.css')
             };
 
+            var waitBeforeShow = rcmLoading.getConfigValue('waitBeforeShow');
+
+            var waitBeforeHide = rcmLoading.getConfigValue('waitBeforeHide');
+
             var compile = function (tElm, tAttr) {
 
                 return function (scope, element, attrs) {
 
+                    /**
+                     * safeApply
+                     * @param fn
+                     */
                     scope.safeApply = function (fn) {
                         var phase = this.$root.$$phase;
                         if (phase == '$apply' || phase == '$digest')
@@ -39,55 +54,112 @@ angular.module('RcmLoading', [])
 
                     scope.isLoading = false;
 
-                    rcmLoading.onLoadingStart(
-                        function (loadingParams) {
-                            scope.loadingPercent = '';
-                            scope.loadingMessage = rcmLoading.getConfigValue(
-                                'loadingMessage'
-                            );
-                            scope.isLoading = true;
+                    /**
+                     * show
+                     * @param loadingParams
+                     */
+                    var show = function (loadingParams) {
+                        scope.loadingPercent = '';
+                        scope.loadingMessage = rcmLoading.getConfigValue(
+                            'loadingMessage'
+                        );
+                        scope.isLoading = true;
 
-                            scope.safeApply();
-                        },
+                        scope.safeApply();
+                    };
+
+                    var showTimeout = null;
+
+                    /**
+                     * hide
+                     * @param loadingParams
+                     */
+                    var hide = function (loadingParams) {
+                        scope.loadingPercent = '';
+                        scope.loadingMessage = rcmLoading.getConfigValue(
+                            'loadingCompleteMessage'
+                        );
+                        scope.isLoading = false;
+
+                        scope.safeApply();
+                    };
+
+                    var hideTimeout = null;
+
+                    /**
+                     * onLoadingStart
+                     * @param loadingParams
+                     */
+                    var onLoadingStart = function (loadingParams) {
+
+                        if (showTimeout) {
+                            return;
+                        }
+
+                        showTimeout = window.setTimeout(
+                            show,
+                            waitBeforeShow
+                        );
+                    };
+
+                    /**
+                     * onLoadingChange
+                     * @param loadingParams
+                     */
+                    var onLoadingChange = function (loadingParams) {
+
+                        scope.loadingPercent = '';
+
+                        var percent = loadingParams.tracker.getPercent();
+
+                        if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
+                            scope.loadingPercent = ' ' + loadingParams.tracker.getPercent() + '%';
+                        }
+
+                        scope.loadingMessage = rcmLoading.getConfigValue(
+                            'loadingMessage'
+                        );
+
+                        scope.safeApply();
+                    };
+
+                    /**
+                     * onLoadingComplete
+                     * @param loadingParams
+                     */
+                    var onLoadingComplete = function (loadingParams) {
+                        if (showTimeout) {
+                            window.clearTimeout(showTimeout);
+                            showTimeout = null;
+                        }
+
+                        if (hideTimeout) {
+                            window.clearTimeout(hideTimeout);
+                            hideTimeout = null;
+                        }
+
+                        hideTimeout = window.setTimeout(
+                            hide,
+                            waitBeforeHide
+                        );
+                    };
+
+
+                    rcmLoading.onLoadingStart(
+                        onLoadingStart,
                         'rcmGlobalLoader'
                     );
 
                     rcmLoading.onLoadingChange(
-                        function (loadingParams) {
-
-                            scope.loadingPercent = '';
-                            
-                            var percent = loadingParams.tracker.getPercent();
-
-                            if(percent > 0 && rcmLoading.getConfigValue('showPercent')){
-                                scope.loadingPercent = ' ' + loadingParams.tracker.getPercent() + '%';
-                            }
-
-                            scope.loadingMessage = rcmLoading.getConfigValue(
-                                'loadingMessage'
-                            );
-                            scope.isLoading = true;
-
-                            scope.safeApply();
-                        },
+                        onLoadingChange,
                         'rcmGlobalLoader'
                     );
 
                     rcmLoading.onLoadingComplete(
-                        function (loadingParams) {
-                            scope.loadingPercent = '';
-                            scope.loadingMessage = rcmLoading.getConfigValue(
-                                'loadingCompleteMessage'
-                            );
-                            scope.isLoading = false;
-
-                            scope.safeApply();
-                        },
+                        onLoadingComplete,
                         'rcmGlobalLoader'
                     );
                 };
-
-
             };
 
             return {
@@ -96,7 +168,5 @@ angular.module('RcmLoading', [])
                 templateUrl: url.template
             }
         }
-
-
     ]
 );
