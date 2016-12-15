@@ -11,5 +11,8 @@
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-contrib-watch": "^1.0.0",
     "jit-grunt": "^0.9.1"
+  },
+  "dependencies": {
+    "grunt-inline-template": "0.0.1"
   }
 }

@@ -5,7 +5,8 @@
 var RcmLoadingJqueryGlobalLoader = function (
     window,
     jQuery,
-    rcmLoading
+    rcmLoading,
+    RcmLoadingLoader
 ) {
 
     var self = this;
@@ -16,9 +17,7 @@ var RcmLoadingJqueryGlobalLoader = function (
 
     var contentElm;
 
-    var waitBeforeShow = rcmLoading.getConfigValue('waitBeforeShow');
-
-    var waitBeforeHide = rcmLoading.getConfigValue('waitBeforeHide');
+    var rcmLoadingLoader;
 
     /**
      * url
@@ -50,6 +49,10 @@ var RcmLoadingJqueryGlobalLoader = function (
         return loaderElm;
     };
 
+    /**
+     * getContentElm
+     * @returns {*}
+     */
     var getContentElm = function () {
 
         if (contentElm && contentElm.length > 0) {
@@ -78,6 +81,7 @@ var RcmLoadingJqueryGlobalLoader = function (
      * preShow
      */
     var preShow = function () {
+
         loaderElm.show();
     };
 
@@ -85,18 +89,17 @@ var RcmLoadingJqueryGlobalLoader = function (
      * start
      */
     var show = function () {
+
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingMessage')
         );
         contentElm.show();
     };
-
-    var showTimeout = null;
-
     /**
      * end
      */
     var hide = function () {
+
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingCompleteMessage')
         );
@@ -104,63 +107,15 @@ var RcmLoadingJqueryGlobalLoader = function (
         contentElm.hide();
     };
 
-    var hideTimeout = null;
-
     /**
-     * onLoadingStart
-     * @param loadingParams
+     * setLoadingMessage
+     * @param message
+     * @param percent
      */
-    var onLoadingStart = function (loadingParams) {
+    var setLoadingMessage = function (message, percent) {
 
-        preShow();
-
-        if (showTimeout) {
-            return;
-        }
-
-        showTimeout = window.setTimeout(
-            show,
-            waitBeforeShow
-        );
-    };
-
-    /**
-     * onLoadingChange
-     * @param loadingParams
-     */
-    var onLoadingChange = function (loadingParams) {
-        var percentMsg = '';
-        var percent = loadingParams.tracker.getPercent();
-        if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
-            percentMsg = ' ' + loadingParams.tracker.getPercent() + '%';
-        }
         loaderElm.find('.loading-message').html(
-            //'-' +
-            rcmLoading.getConfigValue('loadingMessage')
-            + percentMsg
-            //+ '-'
-        );
-        //loaderElm.show();
-    };
-
-    /**
-     * onLoadingComplete
-     * @param loadingParams
-     */
-    var onLoadingComplete = function (loadingParams) {
-        if (showTimeout) {
-            window.clearTimeout(showTimeout);
-            showTimeout = null;
-        }
-
-        if (hideTimeout) {
-            window.clearTimeout(hideTimeout);
-            hideTimeout = null;
-        }
-
-        hideTimeout = window.setTimeout(
-            hide,
-            waitBeforeHide
+            message + ' ' + percent
         );
     };
 
@@ -182,28 +137,7 @@ var RcmLoadingJqueryGlobalLoader = function (
 
         jQuery(document.body).append(loaderElm);
 
-        buildEvents();
-    };
-
-    /**
-     * buildEvents
-     */
-    var buildEvents = function () {
-
-        rcmLoading.onLoadingStart(
-            onLoadingStart,
-            'rcmGlobalLoader'
-        );
-
-        rcmLoading.onLoadingChange(
-            onLoadingChange,
-            'rcmGlobalLoader'
-        );
-
-        rcmLoading.onLoadingComplete(
-            onLoadingComplete,
-            'rcmGlobalLoader'
-        );
+        rcmLoadingLoader.init();
     };
 
     /**
@@ -235,6 +169,14 @@ var RcmLoadingJqueryGlobalLoader = function (
             console.warn('RcmLoading jQuery-loader detected a loader element (' + globalLoaderName + '). Did NOT build jQuery loader.');
             return;
         }
+        rcmLoadingLoader = new RcmLoadingLoader(
+            rcmLoading,
+            preShow,
+            show,
+            hide,
+            setLoadingMessage
+        );
+
         getTemplate();
     };
 };
@@ -249,7 +191,8 @@ jQuery(document).ready(
         var loader = new RcmLoadingJqueryGlobalLoader(
             window,
             jQuery,
-            rcmLoading
+            rcmLoading,
+            RcmLoadingLoader
         );
         loader.init();
     }

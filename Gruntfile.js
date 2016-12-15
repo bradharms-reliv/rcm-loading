@@ -4,6 +4,23 @@ module.exports = function (grunt) {
     grunt.initConfig(
         {
             pkg: grunt.file.readJSON('package.json'),
+            // inlineTemplate: {
+            //     options: {
+            //         base: 'src'
+            //     },
+            //     angularRcmLoading: {
+            //         src: [
+            //             'src/angular-rcm-loading.js'
+            //         ],
+            //         dest: 'build/angular-rcm-loading.js'
+            //     },
+            //     jqueryLoader: {
+            //         src: [
+            //             'src/jquery-loader.js'
+            //         ],
+            //         dest: 'build/jquery-loader.js'
+            //     }
+            // },
             uglify: {
                 dist : {
                     options: {
@@ -14,6 +31,7 @@ module.exports = function (grunt) {
                     files: {
                         'dist/<%= pkg.name %>.min.js': [
                             'src/rcm-loading.js',
+                            'src/rcm-loading-loader.js',
                             'src/rcm-loading-params.js',
                             'src/rcm-loading-tracker.js',
                             'src/rcm-loading-service.js'
@@ -65,6 +83,7 @@ module.exports = function (grunt) {
                 dist: {
                     src: [
                         'src/rcm-loading.js',
+                        'src/rcm-loading-loader.js',
                         'src/rcm-loading-params.js',
                         'src/rcm-loading-tracker.js',
                         'src/rcm-loading-service.js'
@@ -85,7 +104,7 @@ module.exports = function (grunt) {
         }
     );
 
-    // Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-inline-template');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');

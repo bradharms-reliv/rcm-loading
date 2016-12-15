@@ -17,13 +17,30 @@ angular.module('RcmLoading').factory(
 );
 
 /**
+ * rcmLoadingLoader
+ */
+angular.module('RcmLoading').factory(
+    'RcmLoadingLoader',
+    function () {
+
+        return RcmLoadingLoader;
+    }
+);
+
+/**
  * rcmGlobalLoader
  */
 angular.module('RcmLoading').directive(
     'rcmGlobalLoader',
     [
+        '$window',
         'rcmLoading',
-        function (rcmLoading) {
+        'RcmLoadingLoader',
+        function (
+            $window,
+            rcmLoading,
+            RcmLoadingLoader
+        ) {
 
             var url = {
                 template: rcmLoading.getTemplateUrl('loading.html'),
@@ -60,6 +77,7 @@ angular.module('RcmLoading').directive(
                      * preShow
                      */
                     var preShow = function () {
+
                         scope.isLoading = true;
                         scope.safeApply();
                     };
@@ -69,23 +87,22 @@ angular.module('RcmLoading').directive(
                      * @param loadingParams
                      */
                     var show = function (loadingParams) {
+
                         scope.loadingPercent = '';
                         scope.loadingMessage = rcmLoading.getConfigValue(
                             'loadingMessage'
                         );
 
                         scope.showContent = true;
-                        
                         scope.safeApply();
                     };
-
-                    var showTimeout = null;
 
                     /**
                      * hide
                      * @param loadingParams
                      */
                     var hide = function (loadingParams) {
+
                         scope.loadingPercent = '';
                         scope.loadingMessage = rcmLoading.getConfigValue(
                             'loadingCompleteMessage'
@@ -96,83 +113,32 @@ angular.module('RcmLoading').directive(
                         scope.safeApply();
                     };
 
-                    var hideTimeout = null;
-
                     /**
-                     * onLoadingStart
-                     * @param loadingParams
+                     * setLoadingMessage
+                     * @param message
+                     * @param percent
                      */
-                    var onLoadingStart = function (loadingParams) {
+                    var setLoadingMessage = function (message, percent) {
 
-                        preShow();
-
-                        if (showTimeout) {
-                            return;
-                        }
-
-                        showTimeout = window.setTimeout(
-                            show,
-                            waitBeforeShow
-                        );
-                    };
-
-                    /**
-                     * onLoadingChange
-                     * @param loadingParams
-                     */
-                    var onLoadingChange = function (loadingParams) {
-
-                        scope.loadingPercent = '';
-
-                        var percent = loadingParams.tracker.getPercent();
-
-                        if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
-                            scope.loadingPercent = ' ' + loadingParams.tracker.getPercent() + '%';
-                        }
-
-                        scope.loadingMessage = rcmLoading.getConfigValue(
-                            'loadingMessage'
-                        );
+                        scope.loadingMessage = message;
+                        scope.loadingPercent = percent;
 
                         scope.safeApply();
                     };
 
                     /**
-                     * onLoadingComplete
-                     * @param loadingParams
+                     * RcmLoadingLoader
+                     * @type {RcmLoadingLoader}
                      */
-                    var onLoadingComplete = function (loadingParams) {
-                        if (showTimeout) {
-                            window.clearTimeout(showTimeout);
-                            showTimeout = null;
-                        }
-
-                        if (hideTimeout) {
-                            window.clearTimeout(hideTimeout);
-                            hideTimeout = null;
-                        }
-
-                        hideTimeout = window.setTimeout(
-                            hide,
-                            waitBeforeHide
-                        );
-                    };
-
-
-                    rcmLoading.onLoadingStart(
-                        onLoadingStart,
-                        'rcmGlobalLoader'
+                    var rcmLoadingLoader = new RcmLoadingLoader(
+                        rcmLoading,
+                        preShow,
+                        show,
+                        hide,
+                        setLoadingMessage
                     );
 
-                    rcmLoading.onLoadingChange(
-                        onLoadingChange,
-                        'rcmGlobalLoader'
-                    );
-
-                    rcmLoading.onLoadingComplete(
-                        onLoadingComplete,
-                        'rcmGlobalLoader'
-                    );
+                    rcmLoadingLoader.init();
                 };
             };
 
