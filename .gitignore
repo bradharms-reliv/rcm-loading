@@ -7,5 +7,6 @@
 .DS_Store
 .bower.json
 .sizecache.json
+/build
 
 /node_modules

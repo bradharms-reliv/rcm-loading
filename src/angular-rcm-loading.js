@@ -17,13 +17,28 @@ angular.module('RcmLoading').factory(
 );
 
 /**
+ * rcmLoadingLoader
+ */
+angular.module('RcmLoading').factory(
+    'rcmLoadingLoader',
+    function () {
+
+        return rcmLoadingLoader;
+    }
+);
+
+/**
  * rcmGlobalLoader
  */
 angular.module('RcmLoading').directive(
     'rcmGlobalLoader',
     [
+        '$window',
         'rcmLoading',
-        function (rcmLoading) {
+        function (
+            $window,
+            rcmLoading
+        ) {
 
             var url = {
                 template: rcmLoading.getTemplateUrl('loading.html'),
@@ -56,10 +71,13 @@ angular.module('RcmLoading').directive(
 
                     scope.showContent = false;
 
+                    var showCount = 0;
+
                     /**
                      * preShow
                      */
                     var preShow = function () {
+
                         scope.isLoading = true;
                         scope.safeApply();
                     };
@@ -69,13 +87,13 @@ angular.module('RcmLoading').directive(
                      * @param loadingParams
                      */
                     var show = function (loadingParams) {
+
                         scope.loadingPercent = '';
                         scope.loadingMessage = rcmLoading.getConfigValue(
                             'loadingMessage'
                         );
 
                         scope.showContent = true;
-
                         scope.safeApply();
                     };
 
@@ -86,6 +104,7 @@ angular.module('RcmLoading').directive(
                      * @param loadingParams
                      */
                     var hide = function (loadingParams) {
+
                         scope.loadingPercent = '';
                         scope.loadingMessage = rcmLoading.getConfigValue(
                             'loadingCompleteMessage'
@@ -104,13 +123,20 @@ angular.module('RcmLoading').directive(
                      */
                     var onLoadingStart = function (loadingParams) {
 
+                        showCount++;
+
                         preShow();
+
+                        if (hideTimeout) {
+                            window.clearTimeout(hideTimeout);
+                            hideTimeout = null;
+                        }
 
                         if (showTimeout) {
                             return;
                         }
 
-                        showTimeout = window.setTimeout(
+                        showTimeout = $window.setTimeout(
                             show,
                             waitBeforeShow
                         );
@@ -142,17 +168,27 @@ angular.module('RcmLoading').directive(
                      * @param loadingParams
                      */
                     var onLoadingComplete = function (loadingParams) {
+
+                        showCount--;
+
+                        if(showCount > 0) {
+                            // do nothing if we are out of sync
+                            return;
+                        }
+
+                        showCount = 0;
+
                         if (showTimeout) {
-                            window.clearTimeout(showTimeout);
+                            $window.clearTimeout(showTimeout);
                             showTimeout = null;
                         }
 
                         if (hideTimeout) {
-                            window.clearTimeout(hideTimeout);
+                            $window.clearTimeout(hideTimeout);
                             hideTimeout = null;
                         }
 
-                        hideTimeout = window.setTimeout(
+                        hideTimeout = $window.setTimeout(
                             hide,
                             waitBeforeHide
                         );
@@ -179,6 +215,7 @@ angular.module('RcmLoading').directive(
             return {
                 compile: compile,
                 scope: [],
+                //template: '<%= inlineTemplate("template/default/loading.html") %>'
                 templateUrl: url.template
             }
         }

@@ -50,6 +50,10 @@ var RcmLoadingJqueryGlobalLoader = function (
         return loaderElm;
     };
 
+    /**
+     * getContentElm
+     * @returns {*}
+     */
     var getContentElm = function () {
 
         if (contentElm && contentElm.length > 0) {
@@ -78,6 +82,7 @@ var RcmLoadingJqueryGlobalLoader = function (
      * preShow
      */
     var preShow = function () {
+
         loaderElm.show();
     };
 
@@ -85,18 +90,17 @@ var RcmLoadingJqueryGlobalLoader = function (
      * start
      */
     var show = function () {
+
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingMessage')
         );
         contentElm.show();
     };
-
-    var showTimeout = null;
-
     /**
      * end
      */
     var hide = function () {
+
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingCompleteMessage')
         );
@@ -104,7 +108,15 @@ var RcmLoadingJqueryGlobalLoader = function (
         contentElm.hide();
     };
 
-    var hideTimeout = null;
+    /**
+     *
+     * @param message
+     */
+    var setLoadingMessage = function (message) {
+        loaderElm.find('.loading-message').html(
+            message
+        );
+    };
 
     /**
      * onLoadingStart
@@ -112,7 +124,14 @@ var RcmLoadingJqueryGlobalLoader = function (
      */
     var onLoadingStart = function (loadingParams) {
 
+        showCount++;
+
         preShow();
+
+        if (hideTimeout) {
+            window.clearTimeout(hideTimeout);
+            hideTimeout = null;
+        }
 
         if (showTimeout) {
             return;
@@ -129,18 +148,16 @@ var RcmLoadingJqueryGlobalLoader = function (
      * @param loadingParams
      */
     var onLoadingChange = function (loadingParams) {
+
         var percentMsg = '';
         var percent = loadingParams.tracker.getPercent();
         if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
             percentMsg = ' ' + loadingParams.tracker.getPercent() + '%';
         }
-        loaderElm.find('.loading-message').html(
-            //'-' +
+        setLoadingMessage(
             rcmLoading.getConfigValue('loadingMessage')
             + percentMsg
-            //+ '-'
         );
-        //loaderElm.show();
     };
 
     /**
@@ -148,6 +165,16 @@ var RcmLoadingJqueryGlobalLoader = function (
      * @param loadingParams
      */
     var onLoadingComplete = function (loadingParams) {
+
+        showCount--;
+
+        if (showCount > 0) {
+            // do nothing if we are out of sync
+            return;
+        }
+
+        showCount = 0;
+
         if (showTimeout) {
             window.clearTimeout(showTimeout);
             showTimeout = null;

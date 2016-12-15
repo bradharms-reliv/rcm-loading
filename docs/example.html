@@ -46,6 +46,12 @@
                 }
             }
         }
+        
+        var consoleLog = function (label, data) {
+            //console.log(label, data);
+        };
+
+
         /**
          * Direct changing of dom
          */
@@ -68,7 +74,7 @@
          */
         rcmLoading.onLoadingStart(
                 function (loadingParams) {
-                    console.log('example.onLoadingStart', loadingParams);
+                    consoleLog('example.onLoadingStart', loadingParams);
                 },
                 'rcmLoadingTrackerExample'
         );
@@ -79,7 +85,7 @@
         rcmLoading.onLoadingChange(
                 function (loadingParams) {
                     updateLoaderBar('.total', loadingParams.tracker.getPercent());
-                    console.log('example.loadingChange', loadingParams);
+                    consoleLog('example.loadingChange', loadingParams);
                 },
                 'rcmLoadingTrackerExample'
         );
@@ -90,7 +96,7 @@
         rcmLoading.onLoadingComplete(
                 function (loadingParams) {
                     updateLoaderBar('.total', loadingParams.tracker.getPercent());
-                    console.log('example.loadingComplete', loadingParams);
+                    consoleLog('example.loadingComplete', loadingParams);
                 },
                 'rcmLoadingTrackerExample'
         );
@@ -101,7 +107,7 @@
         rcmLoading.getServiceInstance().events.on(
                 'myCustomChangeEvent.test1',
                 function (params) {
-                    console.log('myCustomChangeEvent.test1', params);
+                    consoleLog('myCustomChangeEvent.test1', params);
                 },
                 'changeEvent.test1.listener1',
                 true
@@ -120,14 +126,14 @@
                     0,
                     {
                         onChange: function (params) {
-                            //console.log('onChange test1', params);
+                            //consoleLog('onChange test1', params);
                             updateLoaderBar('.test1', params.getPercent());
                             // Trigger a custom event
                             rcmLoading.getServiceInstance().events.trigger('myCustomChangeEvent.test1',params);
 
                         },
                         onComplete: function (params) {
-                            //console.log('onComplete test1', params);
+                            //consoleLog('onComplete test1', params);
                             updateLoaderBar('.test1', params.getPercent());
                         }
                     }
@@ -144,7 +150,7 @@
                                 0,
                                 {
                                     onChange: function (params) {
-                                        //console.log('onChange test2', params);
+                                        //consoleLog('onChange test2', params);
                                         updateLoaderBar(
                                                 '.test2',
                                                 params.getPercent()
@@ -152,7 +158,7 @@
 
                                     },
                                     onComplete: function (params) {
-                                        //console.log('onComplete test2', params);
+                                        //consoleLog('onComplete test2', params);
                                         updateLoaderBar(
                                                 '.test2',
                                                 params.getPercent()
@@ -191,7 +197,7 @@
 </head>
 <body ng-app="RcmLoading">
 
-<div rcm-global-loader=""></div>
+<!--<div rcm-global-loader=""></div>-->
 <!--<rcm-global-loader></rcm-global-loader>-->
 <div>
     <div>
