@@ -172,13 +172,17 @@ var rcmLoading = {
 };
 
 /**
- * rcmLoadingLoader
+ * RcmLoadingLoader
+ *
+ * @param rcmLoading        {rcmLoading}
  * @param preShow           function
  * @param show              function
  * @param hide              function
  * @param setLoadingMessage function
+ * @constructor
  */
-var rcmLoadingLoader = function (
+var RcmLoadingLoader = function (
+    rcmLoading,
     preShow,
     show,
     hide,
@@ -186,6 +190,9 @@ var rcmLoadingLoader = function (
 ) {
     var self = this;
 
+    var waitBeforeShow = rcmLoading.getConfigValue('waitBeforeShow');
+
+    var waitBeforeHide = rcmLoading.getConfigValue('waitBeforeHide');
 
     var showCount = 0;
 
@@ -227,11 +234,11 @@ var rcmLoadingLoader = function (
         var percentMsg = '';
         var percent = loadingParams.tracker.getPercent();
         if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
-            percentMsg = ' ' + loadingParams.tracker.getPercent() + '%';
+            percentMsg = loadingParams.tracker.getPercent() + '%';
         }
         setLoadingMessage(
-            rcmLoading.getConfigValue('loadingMessage')
-            + percentMsg
+            rcmLoading.getConfigValue('loadingMessage'),
+            percentMsg
         );
     };
 
@@ -265,6 +272,26 @@ var rcmLoadingLoader = function (
             waitBeforeHide
         );
     };
+
+    /**
+     * init
+     */
+    self.init = function () {
+        rcmLoading.onLoadingStart(
+            onLoadingStart,
+            'rcmGlobalLoader'
+        );
+
+        rcmLoading.onLoadingChange(
+            onLoadingChange,
+            'rcmGlobalLoader'
+        );
+
+        rcmLoading.onLoadingComplete(
+            onLoadingComplete,
+            'rcmGlobalLoader'
+        );
+    }
 };
 
 /**

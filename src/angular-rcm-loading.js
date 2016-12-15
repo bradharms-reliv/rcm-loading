@@ -20,10 +20,10 @@ angular.module('RcmLoading').factory(
  * rcmLoadingLoader
  */
 angular.module('RcmLoading').factory(
-    'rcmLoadingLoader',
+    'RcmLoadingLoader',
     function () {
 
-        return rcmLoadingLoader;
+        return RcmLoadingLoader;
     }
 );
 
@@ -35,9 +35,11 @@ angular.module('RcmLoading').directive(
     [
         '$window',
         'rcmLoading',
+        'RcmLoadingLoader',
         function (
             $window,
-            rcmLoading
+            rcmLoading,
+            RcmLoadingLoader
         ) {
 
             var url = {
@@ -71,8 +73,6 @@ angular.module('RcmLoading').directive(
 
                     scope.showContent = false;
 
-                    var showCount = 0;
-
                     /**
                      * preShow
                      */
@@ -97,8 +97,6 @@ angular.module('RcmLoading').directive(
                         scope.safeApply();
                     };
 
-                    var showTimeout = null;
-
                     /**
                      * hide
                      * @param loadingParams
@@ -115,107 +113,38 @@ angular.module('RcmLoading').directive(
                         scope.safeApply();
                     };
 
-                    var hideTimeout = null;
-
                     /**
-                     * onLoadingStart
-                     * @param loadingParams
+                     * setLoadingMessage
+                     * @param message
+                     * @param percent
                      */
-                    var onLoadingStart = function (loadingParams) {
+                    var setLoadingMessage = function (message, percent) {
 
-                        showCount++;
-
-                        preShow();
-
-                        if (hideTimeout) {
-                            window.clearTimeout(hideTimeout);
-                            hideTimeout = null;
-                        }
-
-                        if (showTimeout) {
-                            return;
-                        }
-
-                        showTimeout = $window.setTimeout(
-                            show,
-                            waitBeforeShow
-                        );
-                    };
-
-                    /**
-                     * onLoadingChange
-                     * @param loadingParams
-                     */
-                    var onLoadingChange = function (loadingParams) {
-
-                        scope.loadingPercent = '';
-
-                        var percent = loadingParams.tracker.getPercent();
-
-                        if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
-                            scope.loadingPercent = ' ' + loadingParams.tracker.getPercent() + '%';
-                        }
-
-                        scope.loadingMessage = rcmLoading.getConfigValue(
-                            'loadingMessage'
-                        );
+                        scope.loadingMessage = message;
+                        scope.loadingPercent = percent;
 
                         scope.safeApply();
                     };
 
                     /**
-                     * onLoadingComplete
-                     * @param loadingParams
+                     * RcmLoadingLoader
+                     * @type {RcmLoadingLoader}
                      */
-                    var onLoadingComplete = function (loadingParams) {
-
-                        showCount--;
-
-                        if(showCount > 0) {
-                            // do nothing if we are out of sync
-                            return;
-                        }
-
-                        showCount = 0;
-
-                        if (showTimeout) {
-                            $window.clearTimeout(showTimeout);
-                            showTimeout = null;
-                        }
-
-                        if (hideTimeout) {
-                            $window.clearTimeout(hideTimeout);
-                            hideTimeout = null;
-                        }
-
-                        hideTimeout = $window.setTimeout(
-                            hide,
-                            waitBeforeHide
-                        );
-                    };
-
-
-                    rcmLoading.onLoadingStart(
-                        onLoadingStart,
-                        'rcmGlobalLoader'
+                    var rcmLoadingLoader = new RcmLoadingLoader(
+                        rcmLoading,
+                        preShow,
+                        show,
+                        hide,
+                        setLoadingMessage
                     );
 
-                    rcmLoading.onLoadingChange(
-                        onLoadingChange,
-                        'rcmGlobalLoader'
-                    );
-
-                    rcmLoading.onLoadingComplete(
-                        onLoadingComplete,
-                        'rcmGlobalLoader'
-                    );
+                    rcmLoadingLoader.init();
                 };
             };
 
             return {
                 compile: compile,
                 scope: [],
-                //template: '<%= inlineTemplate("template/default/loading.html") %>'
                 templateUrl: url.template
             }
         }

@@ -5,7 +5,8 @@
 var RcmLoadingJqueryGlobalLoader = function (
     window,
     jQuery,
-    rcmLoading
+    rcmLoading,
+    RcmLoadingLoader
 ) {
 
     var self = this;
@@ -16,9 +17,7 @@ var RcmLoadingJqueryGlobalLoader = function (
 
     var contentElm;
 
-    var waitBeforeShow = rcmLoading.getConfigValue('waitBeforeShow');
-
-    var waitBeforeHide = rcmLoading.getConfigValue('waitBeforeHide');
+    var rcmLoadingLoader;
 
     /**
      * url
@@ -109,85 +108,14 @@ var RcmLoadingJqueryGlobalLoader = function (
     };
 
     /**
-     *
+     * setLoadingMessage
      * @param message
+     * @param percent
      */
-    var setLoadingMessage = function (message) {
+    var setLoadingMessage = function (message, percent) {
+
         loaderElm.find('.loading-message').html(
-            message
-        );
-    };
-
-    /**
-     * onLoadingStart
-     * @param loadingParams
-     */
-    var onLoadingStart = function (loadingParams) {
-
-        showCount++;
-
-        preShow();
-
-        if (hideTimeout) {
-            window.clearTimeout(hideTimeout);
-            hideTimeout = null;
-        }
-
-        if (showTimeout) {
-            return;
-        }
-
-        showTimeout = window.setTimeout(
-            show,
-            waitBeforeShow
-        );
-    };
-
-    /**
-     * onLoadingChange
-     * @param loadingParams
-     */
-    var onLoadingChange = function (loadingParams) {
-
-        var percentMsg = '';
-        var percent = loadingParams.tracker.getPercent();
-        if (percent > 0 && rcmLoading.getConfigValue('showPercent')) {
-            percentMsg = ' ' + loadingParams.tracker.getPercent() + '%';
-        }
-        setLoadingMessage(
-            rcmLoading.getConfigValue('loadingMessage')
-            + percentMsg
-        );
-    };
-
-    /**
-     * onLoadingComplete
-     * @param loadingParams
-     */
-    var onLoadingComplete = function (loadingParams) {
-
-        showCount--;
-
-        if (showCount > 0) {
-            // do nothing if we are out of sync
-            return;
-        }
-
-        showCount = 0;
-
-        if (showTimeout) {
-            window.clearTimeout(showTimeout);
-            showTimeout = null;
-        }
-
-        if (hideTimeout) {
-            window.clearTimeout(hideTimeout);
-            hideTimeout = null;
-        }
-
-        hideTimeout = window.setTimeout(
-            hide,
-            waitBeforeHide
+            message + ' ' + percent
         );
     };
 
@@ -209,28 +137,7 @@ var RcmLoadingJqueryGlobalLoader = function (
 
         jQuery(document.body).append(loaderElm);
 
-        buildEvents();
-    };
-
-    /**
-     * buildEvents
-     */
-    var buildEvents = function () {
-
-        rcmLoading.onLoadingStart(
-            onLoadingStart,
-            'rcmGlobalLoader'
-        );
-
-        rcmLoading.onLoadingChange(
-            onLoadingChange,
-            'rcmGlobalLoader'
-        );
-
-        rcmLoading.onLoadingComplete(
-            onLoadingComplete,
-            'rcmGlobalLoader'
-        );
+        rcmLoadingLoader.init();
     };
 
     /**
@@ -262,6 +169,14 @@ var RcmLoadingJqueryGlobalLoader = function (
             console.warn('RcmLoading jQuery-loader detected a loader element (' + globalLoaderName + '). Did NOT build jQuery loader.');
             return;
         }
+        rcmLoadingLoader = new RcmLoadingLoader(
+            rcmLoading,
+            preShow,
+            show,
+            hide,
+            setLoadingMessage
+        );
+
         getTemplate();
     };
 };
@@ -276,7 +191,8 @@ jQuery(document).ready(
         var loader = new RcmLoadingJqueryGlobalLoader(
             window,
             jQuery,
-            rcmLoading
+            rcmLoading,
+            RcmLoadingLoader
         );
         loader.init();
     }
