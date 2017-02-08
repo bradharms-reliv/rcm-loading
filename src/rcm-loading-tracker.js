@@ -1,4 +1,3 @@
-
 /**
  * rcmLoading.Tracker - Aggregates loading events and tracks loading progress
  * @param onLoadingStart
@@ -37,7 +36,7 @@ rcmLoading.Tracker = function (
      * Get a status message
      * @returns {string}
      */
-    self.getStatusMessage = function(){
+    self.getStatusMessage = function () {
 
         return self.statusMessage;
     };
@@ -48,7 +47,7 @@ rcmLoading.Tracker = function (
      */
     self.isLoading = function (name) {
 
-        if(name){
+        if (name) {
             return (self.getLoading(name) < 1 && self.has(name))
         }
 
@@ -63,13 +62,33 @@ rcmLoading.Tracker = function (
      */
     self.setLoading = function (name, amount, options) {
 
-        if (self.has(name)) {
-            self.loadingAggregate[name].amount = amount;
-        } else {
+        amount = Number(amount);
+
+        var hasLoading = self.has(name);
+        var currentAmount = null;
+
+        if (hasLoading) {
+            currentAmount = self.loadingAggregate[name].amount;
+        }
+
+        if (currentAmount === amount) {
+            // no change so do nothing
+            return;
+        }
+
+        if (!hasLoading && amount >= 1) {
+            // loading is complete so do nothing
+            return;
+        }
+
+        if (!hasLoading) {
             self.add(name, amount, options);
         }
 
-        if(self.loadingAggregate[name].startMessage && amount === 0){
+        self.loadingAggregate[name].amount = amount;
+
+
+        if (self.loadingAggregate[name].startMessage && amount === 0) {
             self.statusMessage = self.loadingAggregate[name].startMessage;
         }
 
@@ -83,7 +102,7 @@ rcmLoading.Tracker = function (
      */
     self.getLoading = function (name) {
 
-        if(!self.has(name)){
+        if (!self.has(name)) {
             return null;
         }
 
@@ -108,7 +127,7 @@ rcmLoading.Tracker = function (
      */
     self.add = function (name, amount, options) {
 
-        if(!options){
+        if (!options) {
             options = {};
         }
 
@@ -156,7 +175,7 @@ rcmLoading.Tracker = function (
                 continue;
             }
 
-            if(self.loadingAggregate[index].amount === null){
+            if (self.loadingAggregate[index].amount === null) {
                 continue;
             }
 
