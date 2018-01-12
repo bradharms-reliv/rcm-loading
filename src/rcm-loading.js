@@ -7,7 +7,7 @@ var rcmLoading = {
      * defaultConfig
      */
     defaultConfig: {
-        baseUrl: '/vendor/rcm-loading/dist',
+        baseUrl: '/bower_components/rcm-loading/dist',
         templateFolder: '/template',
         template: 'default',
         loadingMessage: '',
@@ -164,7 +164,6 @@ var rcmLoading = {
      * @param id
      */
     onLoadingComplete: function (method, id) {
-
         var service = rcmLoading.getServiceInstance();
 
         service.events.on(rcmLoading.eventName.complete, method, id, true);

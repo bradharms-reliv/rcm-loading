@@ -82,6 +82,7 @@ var RcmLoadingJqueryGlobalLoader = function (
      */
     var preShow = function () {
 
+        loaderElm.addClass('is-loading');
         loaderElm.show();
     };
 
@@ -93,6 +94,8 @@ var RcmLoadingJqueryGlobalLoader = function (
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingMessage')
         );
+        loaderElm.addClass('is-loading');
+        loaderElm.addClass('show-content');
         contentElm.show();
     };
     /**
@@ -103,6 +106,8 @@ var RcmLoadingJqueryGlobalLoader = function (
         loaderElm.find('.loading-message').html(
             rcmLoading.getConfigValue('loadingCompleteMessage')
         );
+        loaderElm.removeClass('is-loading');
+        loaderElm.removeClass('show-content');
         loaderElm.hide();
         contentElm.hide();
     };
@@ -126,6 +131,7 @@ var RcmLoadingJqueryGlobalLoader = function (
 
         // remove angular interference
         loaderElm.removeAttr('ng-show');
+        loaderElm.removeAttr('ng-class');
 
         loaderElm.find('.loading-message').html('');
         var cssElm = loaderElm.find("[type='text/css']");

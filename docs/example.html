@@ -39,14 +39,14 @@
         rcmLoading.config.showPercent = true;
 
         // For IE
-        if(typeof console === 'undefined'){
+        if (typeof console === 'undefined') {
             console = {
-                log: function($msg){
+                log: function ($msg) {
                     ///
                 }
             }
         }
-        
+
         var consoleLog = function (label, data) {
             //console.log(label, data);
         };
@@ -64,53 +64,53 @@
             }
 
             $(selector + ' .progress-bar')
-                    .css('width', loadingPerc + '%')
-                    .attr('aria-valuenow', loadingPerc)
-                    .html(message);
+                .css('width', loadingPerc + '%')
+                .attr('aria-valuenow', loadingPerc)
+                .html(message);
         };
 
         /**
          * Listen for global start event
          */
         rcmLoading.onLoadingStart(
-                function (loadingParams) {
-                    consoleLog('example.onLoadingStart', loadingParams);
-                },
-                'rcmLoadingTrackerExample'
+            function (loadingParams) {
+                consoleLog('example.onLoadingStart', loadingParams);
+            },
+            'rcmLoadingTrackerExample'
         );
 
         /**
          * Listen for change global event
          */
         rcmLoading.onLoadingChange(
-                function (loadingParams) {
-                    updateLoaderBar('.total', loadingParams.tracker.getPercent());
-                    consoleLog('example.loadingChange', loadingParams);
-                },
-                'rcmLoadingTrackerExample'
+            function (loadingParams) {
+                updateLoaderBar('.total', loadingParams.tracker.getPercent());
+                consoleLog('example.loadingChange', loadingParams);
+            },
+            'rcmLoadingTrackerExample'
         );
 
         /**
          * Listen for complete global event
          */
         rcmLoading.onLoadingComplete(
-                function (loadingParams) {
-                    updateLoaderBar('.total', loadingParams.tracker.getPercent());
-                    consoleLog('example.loadingComplete', loadingParams);
-                },
-                'rcmLoadingTrackerExample'
+            function (loadingParams) {
+                updateLoaderBar('.total', loadingParams.tracker.getPercent());
+                consoleLog('example.loadingComplete', loadingParams);
+            },
+            'rcmLoadingTrackerExample'
         );
 
         /**
          * Listen for custom event
          */
         rcmLoading.getServiceInstance().events.on(
-                'myCustomChangeEvent.test1',
-                function (params) {
-                    consoleLog('myCustomChangeEvent.test1', params);
-                },
-                'changeEvent.test1.listener1',
-                true
+            'myCustomChangeEvent.test1',
+            function (params) {
+                consoleLog('myCustomChangeEvent.test1', params);
+            },
+            'changeEvent.test1.listener1',
+            true
         );
 
         var rcmLoadingTrackerInit = function () {
@@ -122,75 +122,85 @@
              * Starting to load
              */
             rcmLoading.setLoading(
-                    'test1',
-                    0,
-                    {
-                        onChange: function (params) {
-                            //consoleLog('onChange test1', params);
-                            updateLoaderBar('.test1', params.getPercent());
-                            // Trigger a custom event
-                            rcmLoading.getServiceInstance().events.trigger('myCustomChangeEvent.test1',params);
+                'test1',
+                0,
+                {
+                    onChange: function (params) {
+                        //consoleLog('onChange test1', params);
+                        updateLoaderBar('.test1', params.getPercent());
+                        // Trigger a custom event
+                        rcmLoading.getServiceInstance().events.trigger('myCustomChangeEvent.test1', params);
 
-                        },
-                        onComplete: function (params) {
-                            //consoleLog('onComplete test1', params);
-                            updateLoaderBar('.test1', params.getPercent());
-                        }
+                    },
+                    onComplete: function (params) {
+                        //consoleLog('onComplete test1', params);
+                        updateLoaderBar('.test1', params.getPercent());
                     }
+                }
             );
 
             /**
              * Mock loading
              */
             window.setTimeout(
-                    function () {
-                        rcmLoading.setLoading('test1', .25);
-                        rcmLoading.setLoading(
-                                'test2',
-                                0,
-                                {
-                                    onChange: function (params) {
-                                        //consoleLog('onChange test2', params);
-                                        updateLoaderBar(
-                                                '.test2',
-                                                params.getPercent()
-                                        );
+                function () {
+                    rcmLoading.setLoading('test1', .25);
+                    rcmLoading.setLoading(
+                        'test2',
+                        0,
+                        {
+                            onChange: function (params) {
+                                //consoleLog('onChange test2', params);
+                                updateLoaderBar(
+                                    '.test2',
+                                    params.getPercent()
+                                );
 
-                                    },
-                                    onComplete: function (params) {
-                                        //consoleLog('onComplete test2', params);
-                                        updateLoaderBar(
-                                                '.test2',
-                                                params.getPercent()
-                                        );
-                                    }
-                                }
-                        );
-                    },
-                    1000
+                            },
+                            onComplete: function (params) {
+                                //consoleLog('onComplete test2', params);
+                                updateLoaderBar(
+                                    '.test2',
+                                    params.getPercent()
+                                );
+                            }
+                        }
+                    );
+                },
+                1000
             );
 
             window.setTimeout(
-                    function () {
-                        rcmLoading.setLoading('test1', .5);
-                        rcmLoading.setLoading('test2', .33);
-                    },
-                    2000
+                function () {
+                    rcmLoading.setLoading('test1', .5);
+                    rcmLoading.setLoading('test2', .33);
+                },
+                2000
             );
 
             window.setTimeout(
-                    function () {
-                        rcmLoading.setLoading('test1', 1);
-                        rcmLoading.setLoading('test2', .66);
-                    },
-                    3000
+                function () {
+                    rcmLoading.setLoading('test1', 1);
+                    rcmLoading.setLoading('test2', .66);
+                },
+                3000
             );
 
             window.setTimeout(
-                    function () {
-                        rcmLoading.setLoading('test2', 1);
-                    },
-                    4000
+                function () {
+                    rcmLoading.setLoading('test2', 1);
+                },
+                4000
+            );
+        };
+
+        startLoading = function () {
+            rcmLoading.setLoading('test3', 0);
+            window.setTimeout(
+                function () {
+                    rcmLoading.setLoading('test3', 1);
+                },
+                15000
             );
         };
     </script>
@@ -242,10 +252,17 @@
                 0%
             </div>
         </div>
-        <button type="button"
-                class="btn btn-primary"
-                onclick="rcmLoadingTrackerInit()">Test Loading
-        </button>
+        <form>
+            <button type="button"
+                    class="btn btn-primary"
+                    onclick="rcmLoadingTrackerInit()">Test Loading
+            </button>
+
+            <button type="button"
+                    class="btn btn-success"
+                    onclick="startLoading()">Test Long Loading
+            </button>
+        </form>
     </div>
     <div>
         <h2>Basic Usage</h2>
