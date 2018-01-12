@@ -41,7 +41,6 @@ rcmLoading.Service = function () {
      * @param {object} options optional
      */
     self.setLoading = function (name, amount, options) {
-
         self.tracker.setLoading(name, amount, options);
     };
 

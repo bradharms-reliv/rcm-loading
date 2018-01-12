@@ -1,4 +1,5 @@
-<div class="rcm-loading" ng-show="isLoading">
+<div class="rcm-loading" ng-class="{'is-loading': isLoading, 'show-content': showContent}"
+     ng-show="isLoading">
     <!-- bootstrap style global loader -->
     <link ng-href="{{cssUrl}}" rel="stylesheet" type="text/css"/>
 
@@ -7,8 +8,11 @@
             <div class="loading-content" ng-show="showContent">
                 <span class="loading-indicator"></span>
                 <span class="loading-message">
-                    <!--[if IE 9]><span class="loading-indicator-text glyphicon glyphicon-hourglass"></span><![endif]-->
-                    <span class="loading-message-text" ng-show="loadingMessage || loadingPercent">{{loadingMessage}}{{loadingPercent}}</span>
+                    <!--[if IE 9]>
+                    <span class="loading-indicator-text glyphicon glyphicon-hourglass"></span><![endif]-->
+                    <span class="loading-message-text"
+                          ng-show="loadingMessage || loadingPercent">{{loadingMessage}}{{loadingPercent}}
+                    </span>
                 </span>
             </div>
         </div>
